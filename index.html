@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0 maximum-scale=1.0"/>
+    <!-- ICON -->
+    <link rel="icon" href="./assets/favicon.ico" sizes="32x32" type="image/vnd.microsoft.icon">
+    <!-- TITLE -->
+    <title class="application-title"></title>
+    <!-- META -->
+    <!--<meta property="og:title" content="">-->
+    <!--<meta property="og:description" content="">-->
+    <!--<meta property="og:url" content="https://geoxc-apps.bd.esri.com/.../index.html">-->
+    <!--<meta property="og:image" content="https://geoxc-apps.bd.esri.com/.../assets/app.png">-->
+    
+    <!-- CALCITE -->
+    <script type="module" src="https://js.arcgis.com/calcite-components/1.0.6/calcite.esm.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://js.arcgis.com/calcite-components/1.0.6/calcite.css"/>
+    
+    <!-- ArcGIS API for JavaScript-->
+    <link href="https://js.arcgis.com/4.29/@arcgis/core/assets/esri/themes/light/main.css" rel="stylesheet"/>
+    <script src="https://js.arcgis.com/4.29/"></script>
+    
+    <!-- APPLICATION -->
+    <link rel="stylesheet" type="text/css" href="./css/application.css">
+    <script type="module" src="./js/Application.js"></script>
+  </head>
+  <body class="calcite-mode-light">
+    <calcite-shell>
+      
+      <header class="content-row" slot="header">
+        <h2 class="content-row">
+          <calcite-icon class="application-icon" icon="add-in" scale="l"></calcite-icon>
+          <span class="application-title"></span>
+        </h2>
+        <calcite-action-bar layout="horizontal" expand-disabled="true">
+          <div id="sign-in-container"></div>
+          <calcite-action id="app-share-action" appearance="transparent" scale="m" title="share current options..." text="share current options" icon="link"></calcite-action>
+          <calcite-action id="app-details-action" appearance="transparent" scale="m" title="app details..." text="app details" icon="information"></calcite-action>
+        </calcite-action-bar>
+      </header>
+      
+      <!-- LEFT -->
+      <calcite-shell-panel slot="panel-start" position="start" width-scale="m" collapsed="false">
+        <calcite-action-bar id="side-panel-action-bar" slot="action-bar">
+          <calcite-action text="Content" title="map content" icon="map-contents" class="toggle-action" data-toggle="content" active></calcite-action>
+          <calcite-action text="Bookmarks" title="bookmarks" icon="bookmark" class="toggle-action" data-toggle="bookmarks"></calcite-action>
+        </calcite-action-bar>
+        
+        <calcite-panel class="toggle-panel" data-toggle="content">
+          <calcite-block heading="Display Layer" description="polygon feature layers" collapsible open>
+            <calcite-label>
+              <calcite-combobox id="layer-list" placeholder="Select a layer" selection-mode="single" placeholder-icon="layers"></calcite-combobox>
+            </calcite-label>
+          </calcite-block>
+          <calcite-block id="fields-panel" heading="Fields" description="fields list" collapsible open>
+            <calcite-icon slot="icon" icon="form-elements"></calcite-icon>
+            <calcite-list id="fields-list" filter-enabled filter-placeholder="field name" selection-appearance="border" selection-mode="single"></calcite-list>
+          </calcite-block>
+        </calcite-panel>
+        
+        <calcite-panel class="toggle-panel" data-toggle="bookmarks" hidden>
+          <div id="bookmarks-container"></div>
+        </calcite-panel>
+      
+      </calcite-shell-panel>
+      
+      <!-- CENTER -->
+      <div id="center-container" class="content-col content-fill">
+        <div id="view-container"></div>
+      </div>
+      
+      <!-- RIGHT -->
+      <calcite-shell-panel slot="panel-end" position="end" width-scale="m" collapsed="false">
+        <calcite-action-bar slot="action-bar">
+          <calcite-action text="Display" icon="chart-gear" class="toggle-action" data-toggle="display" active></calcite-action>
+        </calcite-action-bar>
+        
+        <calcite-panel class="toggle-panel" data-toggle="display">
+          
+          <calcite-block heading="Display Options" collapsible>
+            <calcite-label>
+              <div>Number Formatting</div>
+              <calcite-input-number id="precision-input" prefix-text="precision" suffix-text="decimals" step="1" alignment="end" max="12" min="0" number-button-type="vertical" placeholder="precision" value="2"></calcite-input-number>
+            </calcite-label>
+            <calcite-label id="color-ramps-container">
+              <div>Color Scheme</div>
+            </calcite-label>
+          </calcite-block>
+          
+          <calcite-block heading="Statistics" collapsible open>
+            <calcite-label layout="inline-space-between">
+              <div>Count</div>
+              <div id="stat-count-label">---</div>
+            </calcite-label>
+            <calcite-label layout="inline-space-between">
+              <div>Sum</div>
+              <div id="stat-sum-label">---</div>
+            </calcite-label>
+            <calcite-label layout="inline-space-between">
+              <div>Minimum</div>
+              <div id="stat-min-label">---</div>
+            </calcite-label>
+            <calcite-label layout="inline-space-between">
+              <div>Maximum</div>
+              <div id="stat-max-label">---</div>
+            </calcite-label>
+            <calcite-label layout="inline-space-between">
+              <div>Average</div>
+              <div id="stat-avg-label">---</div>
+            </calcite-label>
+            <calcite-label layout="inline-space-between">
+              <div>Median</div>
+              <div id="stat-median-label">---</div>
+            </calcite-label>
+            <calcite-label layout="inline-space-between">
+              <div>Standard Deviation</div>
+              <div id="stat-stdev-label">---</div>
+            </calcite-label>
+            <calcite-label layout="inline-space-between" hidden>
+              <div>Variance</div>
+              <div id="stat-variance-label">---</div>
+            </calcite-label>
+          </calcite-block>
+          
+          <calcite-block heading="Histogram" collapsible open>
+            <div id="histogram-parent-container">
+              <div id="histogram-container"></div>
+            </div>
+            <div id="stat-labels">
+              <div id="stat-label-min">min</div>
+              <div id="stat-label-max">max</div>
+            </div>
+          </calcite-block>
+          
+          <calcite-block heading="Feature" collapsible open>
+            <div id="feature-container"></div>
+          </calcite-block>
+        
+        </calcite-panel>
+      
+      </calcite-shell-panel>
+      
+      <!-- SHAREABLE ALERT -->
+      <calcite-alert id="app-share-alert" slot="alerts" kind="success" icon="launch" placement="bottom" auto-close auto-close-duration="medium">
+        <div slot="message">Shareable link has been copied to the clipboard.</div>
+        <calcite-link slot="link" href="#" target="_blank" role="link" title="open in new tab">open in new tab</calcite-link>
+      </calcite-alert>
+      
+      <!-- NOTICES ADN ALERTS -->
+      <calcite-alert id="app-notice" slot="alerts" kind="danger" placement="bottom" width="auto">
+        <div slot="title"></div>
+        <div slot="message"></div>
+      </calcite-alert>
+      
+      <!-- APP DETAILS MODAL -->
+      <calcite-modal id="app-details-modal" slot="modals" kind="brand" scale="m" width="m" aria-labelledby="app-modal-title">
+        <h3 slot="header" id="app-modal-title" class="application-title"></h3>
+        <div slot="content" class="application-description"></div>
+        <div slot="secondary">
+          <calcite-label layout="inline">
+            <span>hide on startup</span>
+            <calcite-checkbox id="hide-startup-checkbox"></calcite-checkbox>
+          </calcite-label>
+        </div>
+        <calcite-button id="app-details-ok-btn" slot="primary" width="full" hidden>OK</calcite-button>
+      </calcite-modal>
+    
+    </calcite-shell>
+    
+    <!-- LOADER -->
+    <calcite-loader id="app-loader" type="indeterminate" scale="l" text="...loading..."></calcite-loader>
+  
+  </body>
+</html>
